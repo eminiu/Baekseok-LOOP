@@ -16,18 +16,6 @@ st.set_page_config(
 
 st.logo('loop_logo.png', size='large')
 
-# 오른쪽 위 메뉴, Deploy 버튼 숨기기 (로고가 있는 맨 윗줄은 그대로 둠)
-st.markdown(
-    """
-    <style>
-    #MainMenu, [data-testid="stMainMenu"] {visibility: hidden;}
-    [data-testid="stToolbar"], .stAppDeployButton {visibility: hidden;}
-    footer {visibility: hidden;}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 defaults = {
     'e_list': [], 'k_list': [],        # 추출한 단어
     'quz': [], 'sol': [],              # 이번 회차 문제와 정답
