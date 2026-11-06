@@ -14,7 +14,7 @@ st.set_page_config(
     layout = 'centered'
     )
 
-st.logo('loop_logo.png', size='Large')
+st.logo('loop_logo.png', size='large')
 
 defaults = {
     'e_list': [], 'k_list': [],        # 추출한 단어
