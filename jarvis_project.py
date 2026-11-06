@@ -15,17 +15,6 @@ st.set_page_config(
 
 st.logo('loop_logo.png', size='large')
 
-st.markdown(
-    """
-    <style>
-    #MainMenu, [data-testid="stMainMenu"] {visibility: hidden;}   /* 오른쪽 위 ⋮ 메뉴 */
-    [data-testid="stToolbar"] {visibility: hidden;}               /* 오른쪽 위 Deploy 등 버튼 */
-    footer {visibility: hidden;}                                  /* 아래쪽 문구 */
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 defaults = {
     'e_list': [], 'k_list': [],        # 추출한 단어
     'quz': [], 'sol': [],              # 이번 회차 문제와 정답
