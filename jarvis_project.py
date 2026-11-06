@@ -4,7 +4,6 @@ from google import genai
 import PIL.Image
 import re
 import streamlit as st
-import streamlit.components.v1 as components
 #=====================================================================================================================================
 
 #=====================================================================================================================================
@@ -110,7 +109,7 @@ def check_answer(answer):
     s = st.session_state
     q, a = s.quz[s.idx], s.sol[s.idx]
 
-    if answer.strip() == a:
+    if answer.strip() == a.strip():
         s.message = ('success', '성공! 정답입니다.')
         if s.turn_cnt == 1:
             s.correct += 1
@@ -188,21 +187,11 @@ if s.status == 'testing':
         st.info(f'{s.accuracy} · 이제부터 오답을 시작합니다.')
 
     st.caption(f'{s.turn_cnt}회차 · {s.idx+1}/{len(s.quz)}')
-    with st.form('answer form', clear_on_submit = True):
-        answer = st.text_input(f'**{s.quz[s.idx]}**')
-        submitted = st.form_submit_button('제출')
+    st.markdown(f'## {s.quz[s.idx]}')
 
-    components.html(f"""
-        <script>
-        // {s.turn_cnt}-{s.idx}
-        setTimeout(() => {{
-            const input = window.parent.document.querySelector('[data-testid="stForm"] input');
-            if (input) input.focus();
-        }}, 100);
-        </script>
-    """, height=0)
-
-    if submitted:
+    # 화면 맨 아래에 고정되는 입력창 (문제가 바뀌어도 같은 입력창이 유지됨, 엔터로 제출)
+    answer = st.chat_input('답을 입력하고 엔터')
+    if answer:
         check_answer(answer)
         st.rerun()
 
