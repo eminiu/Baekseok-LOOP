@@ -2,6 +2,7 @@ import logging
 logging.getLogger("google_genai").setLevel(logging.ERROR)
 from google import genai
 import PIL.Image
+import os
 import re
 import streamlit as st
 #=====================================================================================================================================
@@ -14,6 +15,18 @@ st.set_page_config(
     )
 
 st.logo('loop_logo.png', size='large')
+
+# 오른쪽 위 메뉴, Deploy 버튼 숨기기 (로고가 있는 맨 윗줄은 그대로 둠)
+st.markdown(
+    """
+    <style>
+    #MainMenu, [data-testid="stMainMenu"] {visibility: hidden;}
+    [data-testid="stToolbar"], .stAppDeployButton {visibility: hidden;}
+    footer {visibility: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 defaults = {
     'e_list': [], 'k_list': [],        # 추출한 단어
@@ -50,7 +63,12 @@ start = st.button('테스트 생성')
 #===================================================================================================================================
 
 #===================================================================================================================================
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+# Render: 환경 변수에서 키 읽기 / 내 컴퓨터, Streamlit Cloud: secrets에서 읽기
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    api_key = st.secrets["GEMINI_API_KEY"]
+
+client = genai.Client(api_key=api_key)
 
 @st.cache_data(show_spinner=False)
 def extract_text_from_image(image_path: str):
