@@ -56,7 +56,12 @@ api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
     api_key = st.secrets["GEMINI_API_KEY"]
 
-client = genai.Client(api_key=api_key)
+# Gemini 연결은 한 번만 만들고 재사용 (화면이 다시 그려질 때마다 새로 만들지 않음)
+@st.cache_resource
+def get_client(key):
+    return genai.Client(api_key=key)
+
+client = get_client(api_key)
 
 @st.cache_data(show_spinner=False)
 def extract_text_from_image(image_path: str):
@@ -181,6 +186,13 @@ if start:
 #===================================================================================================================================
 s = st.session_state
 
+# 답을 먼저 채점하고 그 결과로 화면을 그림 (st.rerun으로 한 번 더 그리지 않아서 빨라짐)
+# chat_input은 코드 위치와 상관없이 화면 맨 아래에 고정돼서 보임
+if s.status == 'testing':
+    answer = st.chat_input('답을 입력하고 엔터')
+    if answer:
+        check_answer(answer)
+
 if s.status == 'testing':
     st.divider()
     if s.message:
@@ -194,12 +206,6 @@ if s.status == 'testing':
 
     st.caption(f'{s.turn_cnt}회차 · {s.idx+1}/{len(s.quz)}')
     st.markdown(f'## {s.quz[s.idx]}')
-
-    # 화면 맨 아래에 고정되는 입력창 (문제가 바뀌어도 같은 입력창이 유지됨, 엔터로 제출)
-    answer = st.chat_input('답을 입력하고 엔터')
-    if answer:
-        check_answer(answer)
-        st.rerun()
 
     if st.button('그만하기'):
         s.status = 'idle'
